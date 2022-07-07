@@ -27,7 +27,7 @@ jobs:
         run: yarn package
 
       - run: |
-        ls
-        cd out/Electron starter-win32-x64
+          ls
+          cd out/Electron starter-win32-x64
 
-        ls
+          ls
