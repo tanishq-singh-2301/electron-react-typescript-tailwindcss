@@ -38,26 +38,39 @@ jobs:
           path: 'package.json'
           prop_path: 'version'
 
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Create Release
+      #   id: create_release
+      #   uses: actions/create-release@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      #   with:
+      #     tag_name: v${{steps.version.outputs.prop}}
+      #     release_name: Release ${{ github.event.head_commit.message }} - v${{steps.version.outputs.prop}}
+      #     draft: false
+      #     prerelease: false
+
+      # - name: Upload Release Asset
+      #   id: upload-release-asset 
+      #   uses: actions/upload-release-asset@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      #   with:
+      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+      #     asset_path: ./out/*/electron-starter.exe
+      #     asset_name: electron-starter.exe
+      #     asset_content_type: application/exe
+
+      - name: Relocating .exe
+        run: |
+          cd out
+          cd */
+          cp electron-starter.exe ../../electron-starter.exe
+
+      - name: Uploading .exe
+        uses: actions/upload-artifact@v2
         with:
-          tag_name: v${{steps.version.outputs.prop}}
-          release_name: Release ${{ github.event.head_commit.message }} - v${{steps.version.outputs.prop}}
-          draft: false
-          prerelease: false
-
-      - name: Upload Release Asset
-        id: upload-release-asset 
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./out/*/electron-starter.exe
-          asset_name: electron-starter.exe
-          asset_content_type: application/exe
+          name: electron-starter
+          path: ./electron-starter.exe
+          retention-days: 1
