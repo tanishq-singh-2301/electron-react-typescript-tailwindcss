@@ -1,4 +1,4 @@
-## Electron + TypeScript + React _ Tailwindcss
+## Electron + TypeScript + React + Tailwindcss
 
 Boilerplate for a project using Electron, React, Tailwindcss and Typescript.
 
