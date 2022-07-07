@@ -26,42 +26,6 @@ jobs:
       - name: Building Application 🍏
         run: yarn package
 
-      - run: |
-          cd out
-          cd */
-          ls
-
-      - name: Reading JSON
-        id: version
-        uses: notiz-dev/github-action-json-property@release
-        with: 
-          path: 'package.json'
-          prop_path: 'version'
-
-      # - name: Create Release
-      #   id: create_release
-      #   uses: actions/create-release@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      #   with:
-      #     tag_name: v${{steps.version.outputs.prop}}
-      #     release_name: Release ${{ github.event.head_commit.message }} - v${{steps.version.outputs.prop}}
-      #     draft: false
-      #     prerelease: false
-
-      # - name: Upload Release Asset
-      #   id: upload-release-asset 
-      #   uses: actions/upload-release-asset@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      #   with:
-      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-      #     asset_path: ./out/*/electron-starter.exe
-      #     asset_name: electron-starter.exe
-      #     asset_content_type: application/exe
-
       - name: Relocating .exe
         run: |
           cd out
@@ -74,3 +38,52 @@ jobs:
           name: electron-starter
           path: ./electron-starter.exe
           retention-days: 1
+
+  release:
+    name: Package Build 🪛
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+
+      - name: Downloading .exe
+        uses: actions/download-artifact@v2
+        with:
+          name: electron-starter
+          path: ./electron-starter.exe
+
+      - name: Reading JSON
+        id: version
+        uses: notiz-dev/github-action-json-property@release
+        with: 
+          path: 'package.json'
+          prop_path: 'version'
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+        with:
+          tag_name: v${{steps.version.outputs.prop}}
+          release_name: Release ${{ github.event.head_commit.message }} - v${{steps.version.outputs.prop}}
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        id: upload-release-asset 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./electron-starter.exe
+          asset_name: electron-starter.exe
+          asset_content_type: application/exe
